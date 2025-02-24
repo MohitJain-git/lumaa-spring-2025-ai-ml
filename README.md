@@ -125,8 +125,11 @@ Expected Monthly Salary: **$5,000 - $6,000**
 ---
 
 ## About Me
-Name: Mohit Jain
-Pursuing Master's in Computer Science at Arizona State University, USA
-Email: mjain107@asu.edu
-Phone No: +1 6028079067
+# Mohit Jain  
+
+🎓 **Master's in Computer Science**  
+🏫 **Arizona State University, USA**  
+
+📧 **Email:** mjain107@asu.edu  
+📞 **Phone:** +1 602-807-9067  
 
