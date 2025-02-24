@@ -9,16 +9,26 @@ import pickle
 import os
 
 # Load and preprocess movie data from a CSV file and return a DataFrame
-def load_movie_data(csv_file):
+def load_movie_data(csv_file, preprocessed_file="preprocessed_df.csv"):
+    if os.path.exists(preprocessed_file):
+        return pd.read_csv(preprocessed_file)
+
     columns_to_keep = [
         "keywords", "overview", "tagline", "genres", "title",
         "vote_average", "original_language"
     ]
-    
+
     try:
         df = pd.read_csv(csv_file, usecols=columns_to_keep)
         df["genres"] = df["genres"].apply(lambda x: ", ".join([genre["name"] for genre in ast.literal_eval(x)]) if pd.notna(x) else "")
         df["keywords"] = df["keywords"].apply(lambda x: ", ".join([keyword["name"] for keyword in ast.literal_eval(x)]) if pd.notna(x) else "")
+
+        # Sample and preprocess data
+        df = sample_data(df)
+        df = preprocess_text_data(df)
+
+        # Save preprocessed data
+        df.to_csv(preprocessed_file, index=False)
         return df
 
     except FileNotFoundError:
@@ -30,7 +40,7 @@ def load_movie_data(csv_file):
         return None
 
 # Sample English-language movies from the dataset as there are not a lot of non-English movies, so we will focus on English movies
-def sample_data(df, sample_size=1000):
+def sample_data(df, sample_size=500):
     df_english = df[df["original_language"] == "en"]
     return df_english.sample(n=min(sample_size, len(df_english)), random_state=42)
 
@@ -64,7 +74,8 @@ def load_models():
 # The recommendation is based on a weighted score of the cosine similarity between the user input and movie descriptions, and the movie ratings
 # The user input is enhanced by adding the genres of the movies that match the user input
 def recommend_movies(df, user_input, method, vectorizer=None, tfidf_matrix=None, model=None, embeddings=None, top_n=5):
-    user_genres = ' '.join([word for word in user_input.split() if word.lower() in df["genres"].str.lower().sum()])
+    all_genres = " ".join(df["genres"].dropna().str.lower())  # Fix: Properly join all genres into a single string
+    user_genres = ' '.join([word for word in user_input.split() if word.lower() in all_genres])
     enhanced_input = user_input + " " + user_genres * 3  
     
     if method == "TF-IDF":
@@ -80,36 +91,32 @@ def recommend_movies(df, user_input, method, vectorizer=None, tfidf_matrix=None,
     )
     
     top_indices = weighted_score.argsort()[-top_n:][::-1]
-    recommendations = df.iloc[top_indices][["title", "overview", "vote_average"]]
+    recommendations = df.iloc[top_indices][["title", "vote_average", "overview", "genres"]]
     
     return recommendations
 
 
 def main():
-    """Main function to run the Streamlit application."""
     st.title("Movie Recommendation System")
     
     csv_file_path = "movies.csv"  
-    df_movies = load_movie_data(csv_file_path)
+    df_sampled = load_movie_data(csv_file_path)
+
+    if not os.path.exists("tfidf_model.pkl") or not os.path.exists("embeddings_model.pkl"):
+        st.write("Training models, please wait...")
+        fit_tfidf(df_sampled)
+        fit_embeddings(df_sampled)
+
+    vectorizer, tfidf_matrix, model, embeddings = load_models()
     
-    if df_movies is not None:
-        df_sampled = sample_data(df_movies)
-        df_sampled = preprocess_text_data(df_sampled)
-
-        if not os.path.exists("tfidf_model.pkl") or not os.path.exists("embeddings_model.pkl"):
-            st.write("Training models, please wait...")
-            fit_tfidf(df_sampled)
-            fit_embeddings(df_sampled)
-
-        vectorizer, tfidf_matrix, model, embeddings = load_models()
-        
-        method = st.radio("Choose Recommendation Method:", ["TF-IDF", "Word Embeddings"])
-        user_query = st.text_input("Describe the type of movie you want to watch:")
-        
-        if st.button("Get Recommendations") and user_query:
-            recommendations = recommend_movies(df_sampled, user_query, method, vectorizer, tfidf_matrix, model, embeddings)
-            st.write("### Top Recommended Movies:")
-            st.write(recommendations)
+    method = st.radio("Choose Recommendation Method:", ["TF-IDF", "Word Embeddings"])
+    user_query = st.text_input("Describe the type of movie you want to watch:")
+    
+    if st.button("Get Recommendations") and user_query:
+        recommendations = recommend_movies(df_sampled, user_query, method, vectorizer, tfidf_matrix, model, embeddings)
+        st.write("### Top Recommended Movies:")
+        st.write(recommendations)
 
 if __name__ == "__main__":
     main()
+

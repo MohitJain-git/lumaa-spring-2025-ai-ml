@@ -17,7 +17,7 @@ This project is a **content-based recommendation system** that suggests movies b
 ---
 
 ## Dataset
-- The dataset used is the **TMDb Movie Metadata** from Kaggle:  
+- The dataset used is the **TMDb Movie Metadata** from Kaggle (only 500 samples are used):  
   [TMDb Movie Metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
 
 - The dataset is filtered to include only English-language movies with the following columns used.
@@ -64,6 +64,12 @@ This will start the interactive interface where you can enter a movie descriptio
 
 ---
 
+## 🎥 Demo
+
+**Video Demonstration:** [Watch the Demo](YoutubeLink)
+
+---
+
 ## Usage
 1. **Select Recommendation Method:** Choose between TF-IDF or Word Embeddings.
 2. **Enter Movie Preferences:** Describe the type of movie you like (e.g., "I love action-packed space adventures with a touch of humor").
@@ -96,23 +102,27 @@ This will start the interactive interface where you can enter a movie descriptio
 > "I love thrilling action movies set in space, with a comedic twist."
 
 ### **Top Recommendations:**
-| Rank | Title           | Vote Average |
-|------|---------------|-------------|
-| 1    | Guardians of the Galaxy | 8.1 |
-| 2    | Star Wars: The Last Jedi | 7.9 |
-| 3    | Thor: Ragnarok | 7.8 |
-| 4    | Avengers: Infinity War | 8.5 |
-| 5    | Deadpool | 8.0 |
+If a user enters *"A thrilling space adventure with humor"*, the system might return:
+
+![Example Recommendations](images/result_ss.png)
 
 ---
 
 ## For better results we can :-
 - **Improve Synonym Handling**: Expand queries using NLP-based synonym detection.
 - **Fine-Tune Weights**: Adjust genre weightings dynamically.
-- **Larger Dataset**: Use more extensive movie databases (e.g., TMDb, IMDb APIs).
+- **Larger Dataset**: Use more extensive movie databases.
 
 ---
 
 ## Salary Expectation
-Expected Monthly Salary: **$4,000 - $6,000**
+Expected Monthly Salary: **$5,000 - $6,000**
+
+---
+
+## About Me
+Name: Mohit Jain
+Pursuing Master's in Computer Science at Arizona State University, USA
+Email: mjain107@asu.edu
+Phone No: +1 6028079067
 
