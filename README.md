@@ -1,91 +1,118 @@
-# AI/Machine Learning Intern Challenge: Simple Content-Based Recommendation
-
-**Deadline**: Sunday, Feb 23th 11:59 pm PST
-
----
+# Movie Recommendation System
 
 ## Overview
+This project is a **content-based recommendation system** that suggests movies based on a short text description provided by the user. Given a dataset of movies with plot summaries, keywords, and genres, the system finds the most relevant movies using **TF-IDF with cosine similarity** or **word embeddings (SentenceTransformers)**.
 
-Build a **content-based recommendation system** that, given a **short text description** of a user’s preferences, suggests **similar items** (e.g., movies) from a small dataset. This challenge should take about **3 hours**, so keep your solution **simple** yet **functional**.
-
-### Example Use Case
-
-- The user inputs:  
-  *"I love thrilling action movies set in space, with a comedic twist."*  
-- Your system processes this description (query) and compares it to a dataset of items (e.g., movies with their plot summaries or keywords).  
-- You then return the **top 3–5 “closest” matches** to the user.
-
----
-
-## Requirements
-
-1. **Dataset**  
-   - Use a **small** public dataset of items (e.g., a list of movies with plot summaries, or other textual descriptions).  
-   - Make sure the dataset is easy to handle (maybe 100–500 rows) so the solution remains quick to implement and run.  
-   - Include the dataset in your forked repository *or* provide instructions/link on how to download it.  
-
-2. **Approach**  
-   - **Content-Based**: At a minimum, use text similarity to recommend items.  
-     - For instance, you can transform both the user’s text input and each item’s description into TF-IDF vectors and compute **cosine similarity**.  
-   - Return the **top N** similar items (e.g., top 5).
-
-3. **Code Organization**  
-   - You may use a **Jupyter Notebook** or **Python scripts**.  
-   - Keep it **readable** and **modular** (e.g., one section for loading data, one for building vectors, one for computing similarity, etc.).  
-   - Briefly comment or docstring your key functions/sections.
-
-4. **Output**  
-   - When given an input description (e.g., `"I like action movies set in space"`), your system should print or return a list of recommended items (e.g., 3–5 titles).  
-   - Include the similarity score or rank if you’d like.
-
-5. **Summary & Instructions**  
-   - A short `README.md` that includes:
-     - **Dataset**: Where it’s from, any steps to load it.  
-     - **Setup**: Python version, virtual environment instructions, and how to install dependencies (`pip install -r requirements.txt`).  
-     - **Running**: How to run your code (e.g., `python recommend.py "Some user description"` or open your notebook in Jupyter).  
-     - **Results**: A brief example of your system’s output for a sample query.
+## Features
+- Users input a short description of their preferred movie type.
+- The system processes this text and compares it with movie descriptions.
+- Two recommendation methods are available:
+  - **TF-IDF (Term Frequency-Inverse Document Frequency)**
+  - **Word Embeddings (Sentence Transformers)**
+- The system returns the **top 5 most relevant** movie recommendations.
+- Higher importance is given to genre-related words to enhance relevance.
+- The movie **title** is included in the text similarity search to improve results.
+- The movie's **vote average** is factored into the ranking.
 
 ---
 
-## Deliverables
+## Dataset
+- The dataset used is the **TMDb Movie Metadata** from Kaggle:  
+  [TMDb Movie Metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
 
-1. **Fork the Public Repository**  
-   - **Fork** this repo into your own GitHub account.
+- The dataset is filtered to include only English-language movies with the following columns used.
+- **title**: Movie title
+- **overview**: Plot summary
+- **tagline**: A short tagline describing the movie
+- **genres**: Movie genres (e.g., Action, Comedy)
+- **keywords**: Descriptive words associated with the movie
+- **vote_average**: Viewer rating score
+- **original_language**: Language of the movie (only English movies are considered)
 
-2. **Implement Your Solution**  
-   - Load and preprocess your dataset (e.g., read CSV, handle text columns).  
-   - Convert text data to vectors (e.g., TF-IDF).  
-   - Implement a function to compute similarity between the user’s query and each item’s description.  
-   - Return the top matches.
-   - Salary expectation per month (Mandatory)
-
-3. **Short Video Demo**  
-   - In a `.md` file (e.g., `demo.md`) within your fork, paste a link to a **brief screen recording** (video link).  
-   - Demonstrate:
-     - How you run the recommendation code.  
-     - A sample query and the results.
-
-4. **Deadline**  
-   - Submit your fork by **Sunday, Feb 23th 11:59 pm PST**.
-
-> **Note**: This should be doable within ~3 hours. Keep it **straightforward**—you do **not** need advanced neural networks or complex pipelines. A simple TF-IDF + cosine similarity approach is sufficient.
+The dataset should be in **CSV format** and stored as `movies.csv`.
 
 ---
 
-## Evaluation Criteria
+## Installation
+### Prerequisites
+Ensure you have **Python 3.7+** installed.
 
-1. **Functionality**  
-   - Does your code run without errors?  
-   - When given an input query, does it successfully output relevant items?
+### Install Dependencies
+Run the following command to install all required packages:
+```bash
+pip install -r requirements.txt
+```
 
-2. **Code Quality**  
-   - Clear, commented code (where it counts).  
-   - Logical steps (load data → transform → recommend).
+### Required Libraries
+- `pandas`: Data handling
+- `numpy`: Numerical operations
+- `sklearn`: TF-IDF and cosine similarity
+- `sentence-transformers`: Word embeddings
+- `streamlit`: Web-based UI
+- `pickle`: Model saving/loading
 
-3. **Clarity**  
-   - Is your `README.md` straightforward about setup, how to run, and what to expect?
+---
 
-4. **ML/Recommendation Understanding**  
-   - Basic implementation of a content-based recommendation approach (vectorization, similarity measure).
+## How to Run
 
-**We look forward to seeing your solution!** Good luck!
+### 1. Start the Web App
+Run the following command to launch the Streamlit UI:
+```bash
+streamlit run movie_recom.py
+```
+This will start the interactive interface where you can enter a movie description and get recommendations.
+
+---
+
+## Usage
+1. **Select Recommendation Method:** Choose between TF-IDF or Word Embeddings.
+2. **Enter Movie Preferences:** Describe the type of movie you like (e.g., "I love action-packed space adventures with a touch of humor").
+3. **Get Recommendations:** Click the button, and the system will return the most relevant movies.
+
+---
+
+## Recommendation Logic
+### **1. Text Preprocessing**
+- The `combined_text` column is created by merging **title, overview, tagline, genres, and keywords**.
+- Stopwords are removed.
+
+### **2. Text Representation**
+- **TF-IDF** converts the text into numerical vectors, emphasizing important words.
+- **Word Embeddings** use `all-MiniLM-L6-v2` to capture semantic meaning.
+
+### **3. Similarity Computation**
+- **Cosine Similarity** is calculated between the user query and each movie.
+- **Genre-based Weighting** boosts scores if the query contains genre-related words.
+- **Vote Average Normalization** ensures higher-rated movies are slightly favored.
+
+### **4. Ranking & Output**
+- Movies are ranked based on weighted scores.
+- The top 5 most relevant movies are displayed.
+
+---
+
+## Example Query & Output
+### **Input Query:**
+> "I love thrilling action movies set in space, with a comedic twist."
+
+### **Top Recommendations:**
+| Rank | Title           | Vote Average |
+|------|---------------|-------------|
+| 1    | Guardians of the Galaxy | 8.1 |
+| 2    | Star Wars: The Last Jedi | 7.9 |
+| 3    | Thor: Ragnarok | 7.8 |
+| 4    | Avengers: Infinity War | 8.5 |
+| 5    | Deadpool | 8.0 |
+
+---
+
+## For better results we can :-
+- **Improve Synonym Handling**: Expand queries using NLP-based synonym detection.
+- **Fine-Tune Weights**: Adjust genre weightings dynamically.
+- **Larger Dataset**: Use more extensive movie databases (e.g., TMDb, IMDb APIs).
+
+---
+
+## Salary Expectation
+Expected Monthly Salary: **$4,000 - $6,000**
+
