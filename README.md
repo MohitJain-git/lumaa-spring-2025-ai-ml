@@ -66,7 +66,7 @@ This will start the interactive interface where you can enter a movie descriptio
 
 ## 🎥 Demo
 
-**Video Demonstration:** [Watch the Demo](YoutubeLink)
+**Video Demonstration:** [Watch the Demo](https://youtu.be/vu4j3xys68k)
 
 ---
 
@@ -99,10 +99,14 @@ This will start the interactive interface where you can enter a movie descriptio
 
 ## Example Query & Output
 ### **Input Query:**
-> "I love thrilling action movies set in space, with a comedic twist."
+Try entering:
+
+- *"A thrilling space adventure with humor"*
+- *"A deep emotional drama with a powerful storyline"*
+- *"A fast-paced action movie with a sci-fi setting"*
 
 ### **Top Recommendations:**
-If a user enters *"A thrilling space adventure with humor"*, the system might return:
+If a user enters *"I love thrilling action movies set in space, with a comedic twist."*, the system might return:
 
 ![Example Recommendations](images/result_ss.png)
 
